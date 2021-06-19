@@ -1,4 +1,4 @@
-import { ADD_TO_CART } from "../actions/cartActions";
+import { ADD_TO_CART, REMOVE_TO_CART } from "../actions/cartActions";
 import { cartItems } from "../initialValues/cartItems";
 
 const initialState = {
@@ -6,12 +6,28 @@ const initialState = {
 }
 
 export default function cartReducer(state = initialState, { type, payload }) {
-switch (type) {
-    case ADD_TO_CART:
-        let product = this.state.cartItems.find(c=>c.product.id===payload.id)
-        break;
+    switch (type) {
+        case ADD_TO_CART:
+            let product = this.state.cartItems.find(c => c.product.id === payload.id)
+            if (product) {
+                product.quantity++;
+                return {
+                    ...state
+                }
+            } else {
+                return {
+                    ...state,
+                    cartItems: [...state.cartItems, { quantity: 1, product: payload }]
+                }
+            }
+        case REMOVE_TO_CART:
+            return {
+                ...state,
+                cartItems: state.cartItems.filter(c => c.product.id === payload.id)
+            }
 
-    default:
-        break;
-}
+
+        default:
+            return state;
+    }
 }
